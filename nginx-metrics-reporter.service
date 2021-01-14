@@ -1,0 +1,11 @@
+[Unit]
+Description=Generate nginx acess log report
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=/usr/bin/python3 /opt/nginx-metrics-reporter.py
+
+[Install]
+WantedBy=multi-user.target

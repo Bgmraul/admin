@@ -1,0 +1,42 @@
+- hosts: web
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: Start nginx
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: Copy python script
+    copy:
+      src: nginx-metrics-reporter.py
+      dest: /opt/nginx-metrics-reporter.py
+
+  - name: Copy nginx-reporter service
+    copy:
+      src: nginx-metrics-reporter.service
+      dest: /usr/lib/systemd/system/nginx-metrics-reporter.service
+      owner: root
+      group: root
+
+  - name: Copy nginx-reporter timer
+    copy:
+      src: nginx-metrics-reporter.timer
+      dest: /usr/lib/systemd/system/nginx-metrics-reporter.timer
+      owner: root
+      group: root
+
+  - name: Force systemd to reread configs
+    ansible.builtin.systemd:
+      daemon_reload: yes
+
+  - name: Enable timer for nginx-metrics-reporter
+    ansible.builtin.systemd:
+      name: nginx-metrics-reporter.timer
+      state: started
+      enabled: yes
